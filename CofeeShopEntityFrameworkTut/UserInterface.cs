@@ -1,0 +1,69 @@
+using Spectre.Console;
+using static CofeeShopEntityFrameworkTut.Enums;
+
+namespace CofeeShopEntityFrameworkTut;
+
+static internal class UserInterface
+{
+    static internal void MainMenu()
+    {
+        var isAppRunning = true;
+
+        while (isAppRunning)
+        {
+            var option = AnsiConsole.Prompt(new SelectionPrompt<MenuOptions>().Title("What would you like to do?").AddChoices(MenuOptions.AddProduct, MenuOptions.DeleteProduct, MenuOptions.UpdateProduct, MenuOptions.ViewAllProducts, MenuOptions.ViewProduct));
+
+            switch (option)
+            {
+                case MenuOptions.AddProduct:
+                    ProductsService.InsertProduct();
+                    break;
+                case MenuOptions.DeleteProduct:
+                    ProductsService.DeleteProduct();
+                    break;
+                case MenuOptions.UpdateProduct:
+                    ProductsService.UpdateProduct();
+                    break;
+                case MenuOptions.ViewAllProducts:
+                    ProductsService.GetProducts();
+                    break;
+                case MenuOptions.ViewProduct:
+                    ProductsService.GetProduct();
+                    break;
+            }
+        }
+    }
+    internal static void ShowProduct(Product product)
+    {
+        var panel = new Panel($@"Id: {product.ProductId} Name: {product.Name}")
+        {
+            Header = new PanelHeader("Product Info"),
+            Padding = new Padding(2, 2, 2, 2)
+        };
+
+        AnsiConsole.Write(panel);
+
+        Console.WriteLine("Enter any key to continue");
+        Console.ReadLine();
+        Console.Clear();
+
+    }
+
+    static internal void ShowProductTable(List<Product> products)
+    {
+        var table = new Table();
+        table.AddColumn("Id");
+        table.AddColumn("Name");
+        table.AddColumn("Price");
+
+        foreach (var product in products)
+        {
+            table.AddRow(product.ProductId.ToString(), product.Name, product.Price.ToString());
+        }
+        AnsiConsole.Write(table);
+
+        Console.WriteLine("Enter any key to continue");
+        Console.ReadLine();
+        Console.Clear();
+    }
+}
